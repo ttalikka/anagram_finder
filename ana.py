@@ -60,22 +60,26 @@ except:
 characterList = list(string)
 # create a list for all the possible words (length of the word or less)
 possibleWords = set()
+possibleWords_sorted = set()
 
 # add words to the aforementioned list
 for L in wordList:
     if len(L) <= len(string):
         possibleWords.add(L)
+        possibleWords_sorted.add(tuple(sorted(L)))
 
 # print some info
 print("Word of the day: {}".format(string))
 print("Wordlist length: {}".format(len(wordList)))
 print("Possible words with this word length: {}".format(len(possibleWords)))
+print("Unique sorted words with this word length: {}".format(len(possibleWords_sorted)))
 
-# create all 2-len(n) character combinations from the word
+# create all 2-len(n) character combinations from the word and save those which can be found in the sorted wordlist
 combinationList = set()
 for L in range(2, len(characterList)+1):
     for subset in combinations(characterList,L):
-        combinationList.add(tuple(sorted(subset)))
+        if tuple(sorted(subset)) in possibleWords_sorted:
+            combinationList.add(tuple(sorted(subset)))
 
 # create all the possible permutations of the combinations
 perms = set()
