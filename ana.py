@@ -4,6 +4,7 @@
 import random
 import time
 import sys
+import io
 
 # itertools import
 from itertools import combinations,permutations
@@ -21,7 +22,7 @@ startTime = int(round(time.time() * 1000))
 
 # parse the wordlist into a list
 # wordlist format should be a single word per line
-with open("kotus-siivottu.txt","r") as f:
+with io.open("kotus-siivottu.txt",mode="r",encoding="utf-8") as f:
   wordList = f.read().splitlines()
 
 # returns the contents of a list as a string
