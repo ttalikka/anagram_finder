@@ -59,15 +59,12 @@ except:
 # create a list out of the characters in the word
 characterList = list(string)
 # create a list for all the possible words (length of the word or less)
-possibleWords = []
+possibleWords = set()
 
 # add words to the aforementioned list
 for L in wordList:
     if len(L) <= len(string):
-        possibleWords.append(L)
-
-# convert the list to a set for faster searching
-possibleWords_set = set(possibleWords)
+        possibleWords.add(L)
 
 # print some info
 print("Word of the day: {}".format(string))
@@ -78,13 +75,14 @@ print("Possible words with this word length: {}".format(len(possibleWords)))
 combinationList = set()
 for L in range(2, len(characterList)+1):
     for subset in combinations(characterList,L):
-        combinationList.add(subset)
+        combinationList.add(tuple(sorted(subset)))
 
 # create all the possible permutations of the combinations
 perms = set()
 for L in combinationList:
     for i in permutations(listToString(L)):
         perms.add("".join(i))
+        #print(i)
 
 # print some more info
 print("Permutations of this word: {}".format(len(perms)))
@@ -93,7 +91,7 @@ print("Permutations of this word: {}".format(len(perms)))
 anagrams = []
 for L in perms:
     word = listToString(L)
-    if word in possibleWords_set and word not in anagrams:
+    if word in possibleWords and word not in anagrams:
         anagrams.append(word)
 
 # sort alphabetically and long to short
