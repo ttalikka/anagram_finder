@@ -53,9 +53,20 @@ try:
     # unless passed an integer, then generates a random word of n length
     if string.isdigit():
         string = wordOfTheDay(int(string))
+
 except:
-    # if no arguments are passed, default to a random 8 letter word
-    string = wordOfTheDay(8)
+    # if no arguments are passed, default to a random 8-20 letter word
+    string = wordOfTheDay(random.randrange(8,20))
+
+# check for mode select, coming later, this is pretty placeholder stuff now
+try:
+    mode = str(sys.argv[2])
+except:
+    mode = ""
+
+if mode == "sentence":
+    print("whoo!")
+    quit()
 
 # create a list out of the characters in the word
 characterList = list(string)
@@ -84,18 +95,32 @@ for L in range(2, len(characterList)+1):
 
 # check the possible words sorted letter sequences against the sorted letter sequences available from the letters in the seed word
 # if it's a match, it's an anagram, so add it to the list of anagrams
-anagrams = []
+permutations = []
 for L in possibleWords:
     if tuple(sorted(L)) in combinationList:
-        anagrams.append(L)
+        permutations.append(L)
 
-# sort alphabetically and long to short
-anagrams.sort()
-anagrams.sort(key=len, reverse=True)
+# sort alphabetically and long to short and remove the original word
+permutations.sort()
+permutations.sort(key=len, reverse=True)
+
+if string in permutations:
+    permutations.remove(string)
+
+anagrams = []
+for L in permutations:
+    if len(L) == len(string):
+        anagrams.append(L)
+        permutations.remove(L)
 
 # print the results
-print("-----\nFound a total of {} anagrams or permutations\nTop 10 results for this word: ".format(len(anagrams)))
-for L in anagrams[:10]:
+print("-----\nFound a total of {} anagrams and {} shorter permutations".format(len(anagrams),len(permutations)))
+if len(anagrams) > 0:
+    print("Anagrams:")
+    for L in anagrams:
+        print(L)
+print("Top 10 permutations for this word:")
+for L in permutations[:10]:
     print(L)
 
 # we are done, print the total execution time
@@ -103,8 +128,8 @@ endTime = int(round(time.time() * 1000))
 print("\nProgram completed in {}ms\n".format(endTime-startTime))
 
 # let the user see more results if wanted (if there are any)
-if len(anagrams) > 10:
+if len(permutations) > 10:
     if input("Press enter to view the rest of the results or Ctrl-C (or q and enter) to quit\n") == "q":
         exit()
-    for L in anagrams[10:]:
+    for L in permutations[10:]:
         print(L)
