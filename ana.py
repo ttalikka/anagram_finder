@@ -72,7 +72,7 @@ for L in wordList:
 print("Word of the day: {}".format(string))
 print("Wordlist length: {}".format(len(wordList)))
 print("Possible words with this word length: {}".format(len(possibleWords)))
-print("Unique sorted words with this word length: {}".format(len(possibleWords_sorted)))
+print("Unique sorted sequences with this word length: {}".format(len(possibleWords_sorted)))
 
 # create all 2-len(n) character combinations from the word and save those which can be found in the sorted wordlist
 combinationList = set()
@@ -81,22 +81,12 @@ for L in range(2, len(characterList)+1):
         if tuple(sorted(subset)) in possibleWords_sorted:
             combinationList.add(tuple(sorted(subset)))
 
-# create all the possible permutations of the combinations
-perms = set()
-for L in combinationList:
-    for i in permutations(listToString(L)):
-        perms.add("".join(i))
-        #print(i)
-
-# print some more info
-print("Permutations of this word: {}".format(len(perms)))
-
-# check the permutations against the list of possible words
+# check the possible words sorted letter sequences against the sorted letter sequences available from the letters in the seed word
+# if it's a match, it's an anagram, so add it to the list of anagrams
 anagrams = []
-for L in perms:
-    word = listToString(L)
-    if word in possibleWords and word not in anagrams:
-        anagrams.append(word)
+for L in possibleWords:
+    if tuple(sorted(L)) in combinationList:
+        anagrams.append(L)
 
 # sort alphabetically and long to short
 anagrams.sort()
