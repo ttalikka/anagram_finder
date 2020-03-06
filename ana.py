@@ -18,25 +18,9 @@ Can be invoked with a word or with a word length
 Try to keep it under 24 characters or get a supercomputer!
 """
 
-parser = argparse.ArgumentParser(description='Create anagrams and permutations')
-parser.add_argument("-l", "--length", help="Allows you to input a custom word length (default 8-20 characters)")
-parser.add_argument("-w","--word", help="Allows you to input a custom word")
-args = parser.parse_args()
-
-# if args.word:
-#     print(args.word)
-
-# if args.length:
-#     print(args.length)
-
-# note the start time
-startTime = int(round(time.time() * 1000))
-
-# parse the wordlist into a list
-# wordlist format should be a single word per line
-with io.open("kotus-siivottu.txt",mode="r",encoding="utf-8") as f:
-  wordList = f.read().splitlines()
-
+"""
+Definitions:
+"""
 # returns the contents of a list as a string
 def listToString(s):
 
@@ -58,11 +42,31 @@ def wordOfTheDay(length):
         if len(randomWord) == length:
             return(randomWord)
 
+"""
+Main:
+"""
+
+parser = argparse.ArgumentParser(description='Create anagrams and permutations')
+parser.add_argument("-l", "--length", type=int, help="Allows you to input a custom word length (default 8-20 characters)")
+parser.add_argument("-w","--word", type=str, help="Allows you to input a custom word")
+args = parser.parse_args()
+
+# note the start time
+startTime = int(round(time.time() * 1000))
+
+# parse the wordlist into a list
+# wordlist format should be a single word per line
+with io.open("kotus-siivottu.txt",mode="r",encoding="utf-8") as f:
+  wordList = f.read().splitlines()
+
 # check for arguments
 
 # sets the passed string as the main word
 # if no arguments are passed, default to a random 8-20 letter word
 if args.word:
+    if args.word.isdigit():
+        print("Did you mean --length INT?")
+        quit()
     string = args.word
 else:
     string = wordOfTheDay(random.randrange(8,20))
@@ -127,8 +131,7 @@ for L in permutations[:10]:
     print(L)
 
 # we are done, print the total execution time
-endTime = int(round(time.time() * 1000))
-print("\nProgram completed in {}ms\n".format(endTime-startTime))
+print("\nProgram completed in {}ms\n".format(int(round(time.time() * 1000))-startTime))
 
 # let the user see more results if wanted (if there are any)
 if len(permutations) > 10:
