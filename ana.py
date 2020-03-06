@@ -5,6 +5,7 @@ import random
 import time
 import sys
 import io
+import argparse
 
 # itertools import
 from itertools import combinations
@@ -16,6 +17,17 @@ Running without any parameters defaults to a random 8-20 character long word
 Can be invoked with a word or with a word length
 Try to keep it under 24 characters or get a supercomputer!
 """
+
+parser = argparse.ArgumentParser(description='Create anagrams and permutations')
+parser.add_argument("-l", "--length", help="Allows you to input a custom word length (default 8-20 characters)")
+parser.add_argument("-w","--word", help="Allows you to input a custom word")
+args = parser.parse_args()
+
+# if args.word:
+#     print(args.word)
+
+# if args.length:
+#     print(args.length)
 
 # note the start time
 startTime = int(round(time.time() * 1000))
@@ -47,26 +59,17 @@ def wordOfTheDay(length):
             return(randomWord)
 
 # check for arguments
-try:
-    string = str(sys.argv[1])
-    # sets the passed string as the main word
-    # unless passed an integer, then generates a random word of n length
-    if string.isdigit():
-        string = wordOfTheDay(int(string))
 
-except:
-    # if no arguments are passed, default to a random 8-20 letter word
+# sets the passed string as the main word
+# if no arguments are passed, default to a random 8-20 letter word
+if args.word:
+    string = args.word
+else:
     string = wordOfTheDay(random.randrange(8,20))
 
-# check for mode select, coming later, this is pretty placeholder stuff now
-try:
-    mode = str(sys.argv[2])
-except:
-    mode = ""
-
-if mode == "sentence":
-    print("whoo!")
-    quit()
+# get a random word with a set length instead if length is supplied
+if args.length:
+    string = wordOfTheDay(int(args.length))
 
 # create a list out of the characters in the word
 characterList = list(string)
