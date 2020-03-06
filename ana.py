@@ -118,7 +118,7 @@ startTime = int(round(time.time() * 1000))
 if args.wordlist:
     try:
         wordlist = args.wordlist
-    except:
+    except FileNotFoundError:
         print("Wordlist not found! Defaulting to the KOTUS wordlist...")
         wordlist = "kotus-siivottu.txt"
 else:
@@ -137,7 +137,7 @@ if args.word:
     if args.word.isdigit():
         print("Did you mean --length INT?")
         quit()
-    string = args.word
+    string = args.word.lower()
 else:
     string = wordOfTheDay(random.randrange(8,20))
 
