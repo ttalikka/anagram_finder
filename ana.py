@@ -6,6 +6,7 @@ import time
 import sys
 import io
 import argparse
+from os import system, name 
 
 # itertools import
 from itertools import combinations
@@ -42,21 +43,90 @@ def wordOfTheDay(length):
         if len(randomWord) == length:
             return(randomWord)
 
+def getAnagrams(string):
+
+    # create a list out of the characters in the word
+    characterList = list(string)
+    # create a list for all the possible words (length of the word or less)
+    possibleWords = set()
+    possibleWords_sorted = set()
+
+    # add words to the aforementioned list
+    for L in wordList:
+        if len(L) <= len(string):
+            possibleWords.add(L)
+            possibleWords_sorted.add(tuple(sorted(L)))
+
+    # print some info
+    print("Word of the day: {}".format(string))
+    print("Wordlist length: {}".format(len(wordList)))
+    print("Possible words with this word length: {}".format(len(possibleWords)))
+    print("Unique sorted sequences with this word length: {}".format(len(possibleWords_sorted)))
+
+    # create all 2-len(n) character combinations from the word and save those which can be found in the sorted wordlist
+    combinationList = set()
+    for L in range(2, len(characterList)+1):
+        for subset in combinations(characterList,L):
+            if tuple(sorted(subset)) in possibleWords_sorted:
+                combinationList.add(tuple(sorted(subset)))
+
+    # check the possible words sorted letter sequences against the sorted letter sequences available from the letters in the seed word
+    # if it's a match, it's an anagram, so add it to the list of anagrams
+    permutations = []
+    for L in possibleWords:
+        if tuple(sorted(L)) in combinationList:
+            permutations.append(L)
+
+    # sort alphabetically and long to short and remove the original word
+    permutations.sort()
+    permutations.sort(key=len, reverse=True)
+    if string in permutations:
+        permutations.remove(string)
+
+    # remove the anagrams from the list of shorter permutations
+    anagrams = []
+    for L in permutations:
+        if len(L) == len(string):
+            anagrams.append(L)
+            permutations.remove(L)
+
+    return anagrams, permutations
+
+def clear(): 
+    # clear screen function from https://www.geeksforgeeks.org/clear-screen-python/
+    # for windows 
+    if name == 'nt': 
+        _ = system('cls') 
+    # for mac and linux(here, os.name is 'posix') 
+    else: 
+        _ = system('clear') 
+
 """
 Main:
 """
 
+clear()
 parser = argparse.ArgumentParser(description='Create anagrams and permutations')
 parser.add_argument("-l", "--length", type=int, help="Allows you to input a custom word length (default 8-20 characters)")
 parser.add_argument("-w","--word", type=str, help="Allows you to input a custom word")
+parser.add_argument("--wordlist", type=str, help="Allows you to use a custom wordlist")
 args = parser.parse_args()
 
 # note the start time
 startTime = int(round(time.time() * 1000))
 
+if args.wordlist:
+    try:
+        wordlist = args.wordlist
+    except:
+        print("Wordlist not found! Defaulting to the KOTUS wordlist...")
+        wordlist = "kotus-siivottu.txt"
+else:
+    wordlist = "kotus-siivottu.txt"
+
 # parse the wordlist into a list
 # wordlist format should be a single word per line
-with io.open("kotus-siivottu.txt",mode="r",encoding="utf-8") as f:
+with io.open(wordlist,mode="r",encoding="utf-8") as f:
   wordList = f.read().splitlines()
 
 # check for arguments
@@ -75,50 +145,7 @@ else:
 if args.length:
     string = wordOfTheDay(int(args.length))
 
-# create a list out of the characters in the word
-characterList = list(string)
-# create a list for all the possible words (length of the word or less)
-possibleWords = set()
-possibleWords_sorted = set()
-
-# add words to the aforementioned list
-for L in wordList:
-    if len(L) <= len(string):
-        possibleWords.add(L)
-        possibleWords_sorted.add(tuple(sorted(L)))
-
-# print some info
-print("Word of the day: {}".format(string))
-print("Wordlist length: {}".format(len(wordList)))
-print("Possible words with this word length: {}".format(len(possibleWords)))
-print("Unique sorted sequences with this word length: {}".format(len(possibleWords_sorted)))
-
-# create all 2-len(n) character combinations from the word and save those which can be found in the sorted wordlist
-combinationList = set()
-for L in range(2, len(characterList)+1):
-    for subset in combinations(characterList,L):
-        if tuple(sorted(subset)) in possibleWords_sorted:
-            combinationList.add(tuple(sorted(subset)))
-
-# check the possible words sorted letter sequences against the sorted letter sequences available from the letters in the seed word
-# if it's a match, it's an anagram, so add it to the list of anagrams
-permutations = []
-for L in possibleWords:
-    if tuple(sorted(L)) in combinationList:
-        permutations.append(L)
-
-# sort alphabetically and long to short and remove the original word
-permutations.sort()
-permutations.sort(key=len, reverse=True)
-if string in permutations:
-    permutations.remove(string)
-
-# remove the anagrams from the list of shorter permutations
-anagrams = []
-for L in permutations:
-    if len(L) == len(string):
-        anagrams.append(L)
-        permutations.remove(L)
+anagrams, permutations = getAnagrams(string)
 
 # print the results
 print("-----\nFound a total of {} anagrams and {} shorter permutations".format(len(anagrams),len(permutations)))
