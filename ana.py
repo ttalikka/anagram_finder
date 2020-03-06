@@ -7,14 +7,14 @@ import sys
 import io
 
 # itertools import
-from itertools import combinations,permutations
+from itertools import combinations
 
 """
 ana.py
 Finds anagrams of a word in a wordlist, also lists shorter permutations (Scrabble cheater)
-Running without any parameters defaults to a random 8 character long word
+Running without any parameters defaults to a random 8-20 character long word
 Can be invoked with a word or with a word length
-Try to keep it under 10 characters or get a supercomputer!
+Try to keep it under 24 characters or get a supercomputer!
 """
 
 # note the start time
@@ -103,10 +103,10 @@ for L in possibleWords:
 # sort alphabetically and long to short and remove the original word
 permutations.sort()
 permutations.sort(key=len, reverse=True)
-
 if string in permutations:
     permutations.remove(string)
 
+# remove the anagrams from the list of shorter permutations
 anagrams = []
 for L in permutations:
     if len(L) == len(string):
