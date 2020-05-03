@@ -1,7 +1,7 @@
 FROM python:latest
 
-COPY anagram_finder anagram_finder
-WORKDIR /anagram_finder
+COPY ana.py ana.py
+COPY kotus-siivottu.txt kotus-siivottu.txt
 ENV TERM=xterm
 
 CMD ./ana.py -d
