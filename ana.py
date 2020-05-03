@@ -6,7 +6,7 @@ import time
 import sys
 import io
 import argparse
-from os import system, name 
+from os import system, name
 
 # itertools import
 from itertools import combinations
@@ -92,25 +92,28 @@ def getAnagrams(string):
 
     return anagrams, permutations
 
-def clear(): 
+def clear():
     # clear screen function from https://www.geeksforgeeks.org/clear-screen-python/
-    # for windows 
-    if name == 'nt': 
-        _ = system('cls') 
-    # for mac and linux(here, os.name is 'posix') 
-    else: 
-        _ = system('clear') 
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')
 
 """
 Main:
 """
 
-clear()
 parser = argparse.ArgumentParser(description='Create anagrams and permutations')
 parser.add_argument("-l", "--length", type=int, help="Allows you to input a custom word length (default 8-20 characters)")
 parser.add_argument("-w","--word", type=str, help="Allows you to input a custom word")
 parser.add_argument("--wordlist", type=str, help="Allows you to use a custom wordlist")
+parser.add_argument("-d","--docker", action="store_true", help="Runs in Docker mode (doesn't clear terminal, always shows all results)")
 args = parser.parse_args()
+
+if not args.docker:
+    clear()
 
 # note the start time
 startTime = int(round(time.time() * 1000))
@@ -153,16 +156,23 @@ if len(anagrams) > 0:
     print("Anagrams:")
     for L in anagrams:
         print(L)
-print("Top 10 permutations for this word:")
-for L in permutations[:10]:
-    print(L)
 
-# we are done, print the total execution time
-print("\nProgram completed in {}ms\n".format(int(round(time.time() * 1000))-startTime))
+if not args.docker:
+    print("Top 10 permutations for this word:")
+    for L in permutations[:10]:
+        print(L)
 
-# let the user see more results if wanted (if there are any)
-if len(permutations) > 10:
-    if input("Press enter to view the rest of the results or Ctrl-C (or q and enter) to quit\n") == "q":
-        exit()
-    for L in permutations[10:]:
+    # we are done, print the total execution time
+    print("\nProgram completed in {}ms\n".format(int(round(time.time() * 1000))-startTime))
+
+    # let the user see more results if wanted (if there are any)
+    if len(permutations) > 10:
+        if input("Press enter to view the rest of the results or Ctrl-C (or q and enter) to quit\n") == "q":
+            exit()
+        for L in permutations[10:]:
+            print(L)
+
+if args.docker:
+    print("Top 100 permutations for this word:")
+    for L in permutations[:100]:
         print(L)
